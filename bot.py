@@ -4,8 +4,8 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler, Call
 # Token del bot de Telegram
 BOT_TOKEN = "7830359662:AAFk9JW7-Ky5IbtPttfhOE4_wf-ZZ81gzJ8"
 
-# Función para mostrar el menú principal
-async def start(update: Update, context: CallbackContext) -> None:
+# Función para crear el menú principal
+def get_main_menu():
     keyboard = [
         [InlineKeyboardButton("¿Qué es una CCS?", callback_data="opcion1")],
         [InlineKeyboardButton("¿Qué es una tarjeta blanca?", callback_data="opcion2")],
@@ -18,13 +18,23 @@ async def start(update: Update, context: CallbackContext) -> None:
         [InlineKeyboardButton("Canales de difusión", callback_data="opcion9")],
         [InlineKeyboardButton("Referencias", callback_data="opcion10")]
     ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    return InlineKeyboardMarkup(keyboard)
+
+# Función para mostrar el menú principal
+async def start(update: Update, context: CallbackContext) -> None:
+    reply_markup = get_main_menu()
     await update.message.reply_text("Selecciona una opción:", reply_markup=reply_markup)
 
 # Función para manejar las opciones del menú
 async def handle_menu(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     await query.answer()
+
+    # Si el callback_data es "return", mostrar el menú principal
+    if query.data == "return":
+        reply_markup = get_main_menu()
+        await query.edit_message_text("Selecciona una opción:", reply_markup=reply_markup)
+        return
 
     respuestas = {
         "opcion1": "Son tarjetas de crédito con saldo para comprar en tiendas en línea, al adquirir una puedes sacar ganancias en productos, la preferencia de nuestros clientes se basa en artículos del hogar como: celulares, muebles, escritorios, aparatos electrónicos, componentes para computadoras, consolas de videojuegos y algunos artículos personales.",
@@ -39,8 +49,15 @@ async def handle_menu(update: Update, context: CallbackContext) -> None:
         "opcion10": "Puedes checar nuestras referencias en nuestro canal de Telegram: https://t.me/Referencias_m3todo_AWS"
     }
 
-    # Responde según la opción seleccionada
-    await query.edit_message_text(respuestas[query.data])
+    # Crear el botón de regreso
+    keyboard = [[InlineKeyboardButton("⬅️ Regresar al Menú", callback_data="return")]]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    # Responde según la opción seleccionada con el botón de regreso
+    await query.edit_message_text(
+        text=respuestas[query.data],
+        reply_markup=reply_markup
+    )
 
 # Configurar y ejecutar el bot
 def main():
