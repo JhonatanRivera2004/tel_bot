@@ -57,18 +57,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-@bot.message_handler(commands=['menu'])
-def send_menu(message):
-    # Crear un teclado personalizado
-    markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-    btn1 = types.KeyboardButton('/newbot')
-    btn2 = types.KeyboardButton('/mybots')
-    btn3 = types.KeyboardButton('/myapps')
-    btn4 = types.KeyboardButton('/mygames')
-    markup.add(btn1, btn2, btn3, btn4)
-    
-    # Enviar el mensaje con el teclado
-    bot.send_message(message.chat.id, "Selecciona una opción del menú:", reply_markup=markup)
