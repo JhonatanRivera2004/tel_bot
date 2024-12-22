@@ -1,0 +1,7 @@
+.vscode/
+*.lnk
+*/AppData/
+*/Documents/
+*/Downloads/
+*/Desktop/
+NTUSER.DAT*
